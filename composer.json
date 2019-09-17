@@ -1,0 +1,12 @@
+{
+    "name": "hsouza/querybuilder",
+    "description": "UI component to create queries",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Humberto.Souza",
+            "email": "humberto.nts@gmail.com"
+        }
+    ],
+    "require": {}
+}
