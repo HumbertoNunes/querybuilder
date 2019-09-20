@@ -1,8 +1,8 @@
 <?php
 
-namespace Passionate\Practitioner\Services;
+namespace Passionate\Practitioner;
 
-use Passionate\Practitioner\Core\Connection;
+use Passionate\Practitioner\Connection;
 
 class QueryBuilder
 {

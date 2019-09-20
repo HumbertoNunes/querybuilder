@@ -1,6 +1,6 @@
 <?php
 
-namespace Passionate\Practitioner\Core;
+namespace Passionate\Practitioner;
 
 class Connection
 {
