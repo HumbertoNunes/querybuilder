@@ -6,37 +6,73 @@ use Passionate\Practitioner\Connection;
 
 class QueryBuilder
 {
-	private $connection;
+    private $connection;
 
-	public function __construct()
-	{
+    private $className;
+
+    public function __construct()
+    {
         $this->connection = Connection::make();
-	}
 
-	public static function all()
-	{
-		$object = new static;
+        $this->className = classTreatment(get_class($this));
+    }
 
-		$className = classTreatment(get_class($object));
+    public static function all()
+    {
+        $object = new static;
 
-        $objects = $object->connection->query("SELECT * FROM {$className}");
+        $objects = $object->connection->query("SELECT * FROM {$object->className}");
 
-        return $objects->fetchAll(\PDO::FETCH_CLASS, get_class($object));
-	}
+        return $objects = $objects->fetchAll(\PDO::FETCH_CLASS, get_class($object));
+    }
 
-	public static function find($id)
-	{
-		$object = new static;
+    public static function find($id)
+    {
+        $object = new static;
 
-		$className = classTreatment(get_class($object));
+        $stmt = $object->connection->prepare("SELECT * FROM {$object->className} WHERE id = :id");
 
-        $stmt = $object->connection->prepare("SELECT * FROM :className where id = :id");
-
-        $stmt->bindParam(':className', $className);
         $stmt->bindParam(':id', $id);
 
         $stmt->execute();
 
         return $stmt->fetchObject(get_class($object));
-	}
+    }
+
+    public function save($request)
+    {
+    	$columns = $this->getFillableColumns();
+
+    	$values = $this->getValues($request);
+
+    	$this->connection->query("INSERT INTO boxes ({$columns}) VALUES ({$values})");
+    }
+
+    public function update($request)
+    {
+    	$columns = $this->getFillableColumns();
+
+    	foreach ($request as $column => $value) {
+    		$this->connection->query("UPDATE boxes set {$column} = '{$value}' WHERE id = $this->id");
+    	}
+    }
+
+    public function getValues($request) {
+        foreach($request as $attr => $value) {
+            if(!in_array($attr, $this->fillable)) {
+                unset($request[$attr]);
+            }
+        }
+
+        if(empty($request)) {
+    		throw new \Exception("Nenhum valor passado");
+    	}
+
+        return "'".implode("', '",$request)."'";
+    }
+
+    public function getFillableColumns()
+    {
+    	return implode(", ", $this->fillable);
+    }
 }
