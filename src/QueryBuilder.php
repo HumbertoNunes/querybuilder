@@ -57,6 +57,11 @@ abstract class QueryBuilder
         }
     }
 
+    public function delete()
+    {
+        $this->connection->query("DELETE FROM $this->className WHERE id = $this->id");
+    }
+
     private function getValues($request)
     {
         foreach ($request as $attr => $value) {
