@@ -4,7 +4,7 @@ namespace Passionate\Practitioner;
 
 use Passionate\Practitioner\Connection;
 
-class QueryBuilder
+abstract class QueryBuilder
 {
     private $connection;
 
@@ -19,16 +19,16 @@ class QueryBuilder
 
     public static function all()
     {
-        $object = new static;
+        $object = new static();
 
         $objects = $object->connection->query("SELECT * FROM {$object->className}");
 
-        return $objects = $objects->fetchAll(\PDO::FETCH_CLASS, get_class($object));
+        return $objects->fetchAll(\PDO::FETCH_CLASS, get_class($object));
     }
 
     public static function find($id)
     {
-        $object = new static;
+        $object = new static();
 
         $stmt = $object->connection->prepare("SELECT * FROM {$object->className} WHERE id = :id");
 
@@ -41,38 +41,39 @@ class QueryBuilder
 
     public function save($request)
     {
-    	$columns = $this->getFillableColumns();
+        $columns = $this->getFillableColumns();
 
-    	$values = $this->getValues($request);
+        $values = $this->getValues($request);
 
-    	$this->connection->query("INSERT INTO boxes ({$columns}) VALUES ({$values})");
+        $this->connection->query("INSERT INTO $this->className ({$columns}) VALUES ({$values})");
     }
 
     public function update($request)
     {
-    	$columns = $this->getFillableColumns();
+        $columns = $this->getFillableColumns();
 
-    	foreach ($request as $column => $value) {
-    		$this->connection->query("UPDATE boxes set {$column} = '{$value}' WHERE id = $this->id");
-    	}
+        foreach ($request as $column => $value) {
+            $this->connection->query("UPDATE $this->className set {$column} = '{$value}' WHERE id = $this->id");
+        }
     }
 
-    public function getValues($request) {
-        foreach($request as $attr => $value) {
-            if(!in_array($attr, $this->fillable)) {
+    private function getValues($request)
+    {
+        foreach ($request as $attr => $value) {
+            if (!in_array($attr, $this->fillable)) {
                 unset($request[$attr]);
             }
         }
 
-        if(empty($request)) {
-    		throw new \Exception("Nenhum valor passado");
-    	}
+        if (!$request) {
+            throw new \Exception("Você precisa especificar um atributo fillable contendo os campos desejados.");
+        }
 
-        return "'".implode("', '",$request)."'";
+        return "'" . implode("', '", $request) . "'";
     }
 
-    public function getFillableColumns()
+    private function getFillableColumns()
     {
-    	return implode(", ", $this->fillable);
+        return implode(", ", $this->fillable);
     }
 }
