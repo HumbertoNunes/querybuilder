@@ -1,6 +1,6 @@
 {
     "name": "hsouza/querybuilder",
-    "description": "UI component to create queries",
+    "description": "A simple dinamic crud",
     "type": "library",
     "authors": [
         {
@@ -8,5 +8,14 @@
             "email": "humberto.nts@gmail.com"
         }
     ],
-    "require": {}
+    "require": {},
+    "autoload": {
+        "files": ["src/Helpers/Functions.php"],
+        "psr-4": {
+            "Passionate\\Practitioner\\": "src/",
+        }
+    },
+    "require-dev": {
+        "squizlabs/php_codesniffer": "*"
+    }
 }
