@@ -12,7 +12,7 @@
     "autoload": {
         "files": ["src/Helpers/Functions.php"],
         "psr-4": {
-            "Passionate\\Practitioner\\": "src/",
+            "Passionate\\Practitioner\\": "src/"
         }
     },
     "require-dev": {
