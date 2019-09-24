@@ -36,11 +36,21 @@ abstract class QueryBuilder
 
         $stmt->execute();
 
-        return $stmt->fetchObject(get_class($object));
+        $object = $stmt->fetchObject(get_class($object));
+
+        if (!$object) {
+            throw new \Exception("Nenhum registro encontrado");
+        }
+
+        return $object;
     }
 
     public function save($request)
     {
+        if (empty($this->fillable)) {
+            throw new \Exception("Defina os atributos que deseja inserir no array fillable.");
+        }
+
         $columns = $this->getFillableColumns();
 
         $values = $this->getValues($request);
